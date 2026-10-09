@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gummi LGA Primary Health Care Department Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- External Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="selection:bg-emerald-600 selection:text-white">
+
+    <!-- Top Emergency Announcement Bar -->
+    <div class="bg-emerald-900 text-emerald-100 text-xs py-2 px-4 text-center font-medium">
+        <span>🚑 Gummi LGA PHC Official Portal — Ensuring Accessible Healthcare Across All 11 Wards</span>
+    </div>
+
+    <!-- Sticky Navigation Bar -->
+    <header class="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-700 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                    PHC
+                </div>
+                <div>
+                    <span class="block text-base font-extrabold tracking-tight text-slate-900">Gummi LGA</span>
+                    <span class="block text-xs font-semibold text-emerald-700 uppercase tracking-wider">Health Department</span>
+                </div>
+            </div>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden lg:flex items-center space-x-7 text-sm font-semibold text-slate-600">
+                <a href="#home" class="hover:text-emerald-700 transition">Home</a>
+                <a href="#desks" class="hover:text-emerald-700 transition">Admin Units</a>
+                <a href="#focal-persons" class="hover:text-emerald-700 transition">Ward Focal Persons</a>
+                <a href="#clinics" class="hover:text-emerald-700 transition font-bold text-emerald-800">Clinics (18 PHCs)</a>
+                <a href="#reports-feed" class="hover:text-emerald-700 transition">Live Reports</a>
+                <a href="#ngos" class="hover:text-emerald-700 transition">Partners</a>
+                <a href="#contact" class="hover:text-emerald-700 transition">Submit Report</a>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <button onclick="openAdminModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm hover:shadow active:scale-95">
+                    Admin Portal
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Authentication Modal -->
+    <div id="adminModal" class="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center hidden px-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl relative animate-fade-in border border-slate-100">
+            <button onclick="closeAdminModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 font-bold text-xl">&times;</button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-emerald-100 text-emerald-800 rounded-2xl mx-auto flex items-center justify-center font-bold text-xl mb-3">🔐</div>
+                <h3 class="text-xl font-extrabold text-slate-900">Admin Authentication</h3>
+                <p class="text-xs text-slate-500 mt-1">Enter password to unlock system management features.</p>
+            </div>
+            <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Passcode</label>
+                    <input type="password" id="adminPassword" required class="w-full px-4 py-3 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:outline-none transition" placeholder="admin123">
+                </div>
+                <div id="loginError" class="text-red-600 text-xs hidden font-medium">Incorrect password. Please try again.</div>
+                <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 rounded-xl transition shadow text-sm active:scale-[0.98]">
+                    Authorize Access
+                </button>
+            </form>
+            
+            <div id="adminPanelContent" class="hidden mt-6 pt-6 border-t border-slate-100 text-center animate-fade-in">
+                <div class="bg-emerald-50 p-4 rounded-2xl mb-4 text-left border border-emerald-100">
+                    <h4 class="text-xs font-bold uppercase text-emerald-900 mb-1">Status: Authorized</h4>
+                    <p class="text-xs text-emerald-700">You have full permission to export files, print records, or clean database entries.</p>
+                </div>
+                <div class="space-y-2.5">
+                    <div class="flex gap-2">
+                        <button onclick="exportToExcel()" class="flex-1 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold py-3 rounded-xl transition shadow">
+                            Export Excel (CSV)
+                        </button>
+                        <button onclick="exportToPDF()" class="flex-1 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-3 rounded-xl transition shadow">
+                            Save as PDF
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="clearReports()" class="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-3 rounded-xl transition shadow">
+                            Clear Database
+                        </button>
+                        <button onclick="logoutAdmin()" class="flex-1 bg-slate-600 hover:bg-slate-700 text-white text-xs font-bold py-3 rounded-xl transition shadow">
+                            Lock Session
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-900 text-white py-20 lg:py-28 overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+        <div class="max-w-5xl mx-auto px-4 text-center relative z-10 animate-fade-in">
+            <span class="inline-block bg-emerald-800/80 border border-emerald-600/50 text-emerald-200 text-xs font-bold px-4 py-1.5 rounded-full mb-6 uppercase tracking-wider">
+                Gummi Local Government Area
+            </span>
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black mb-6 tracking-tight leading-tight">
+                PRIMARY HEALTH CARE DEPARTMENT
+            </h1>
+            <p class="text-base sm:text-lg text-emerald-100 max-w-2xl mx-auto mb-10 font-normal leading-relaxed">
+                Central management directory for leadership desks, ward focal representatives, 18 frontline primary health clinics, and live daily reporting logs.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#clinics" class="bg-white text-emerald-950 font-bold px-8 py-4 rounded-2xl shadow-lg hover:bg-emerald-50 transition transform hover:-translate-y-0.5">
+                    Explore 18 PHC Clinics
+                </a>
+                <a href="#contact" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-4 rounded-2xl shadow-lg transition transform hover:-translate-y-0.5">
+                    Submit Ward Report
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Stats Overview Bar -->
+    <section class="max-w-6xl mx-auto px-4 -mt-8 relative z-20 mb-12">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-100 text-center py-6 px-4">
+            <div class="p-4">
+                <span class="block text-3xl sm:text-4xl font-black text-emerald-800">11</span>
+                <span class="text-xs font-bold uppercase text-slate-400 mt-1 block">Political Wards</span>
+            </div>
+            <div class="p-4">
+                <span class="block text-3xl sm:text-4xl font-black text-emerald-800">18</span>
+                <span class="text-xs font-bold uppercase text-slate-400 mt-1 block">PHC Clinics</span>
+            </div>
+            <div class="p-4">
+                <span class="block text-3xl sm:text-4xl font-black text-emerald-800">11</span>
+                <span class="text-xs font-bold uppercase text-slate-400 mt-1 block">Leadership Desks</span>
+            </div>
+            <div class="p-4">
+                <span id="reportsCount" class="block text-3xl sm:text-4xl font-black text-emerald-800">0</span>
+                <span class="text-xs font-bold uppercase text-slate-400 mt-1 block">Submitted Reports</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Primary Health Care Clinics Section (18 PHCs) -->
+    <section id="clinics" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="text-emerald-700 font-extrabold text-xs tracking-widest uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">Frontline Facilities</span>
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-3">Primary Health Care Clinics (18 PHCs)</h2>
+            <p class="text-slate-600 text-sm mt-2">Registered health centers providing curative and preventive care across communities in Gummi LGA.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 01</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Gyalange PHC</h3>
+                <p class="text-slate-600 text-sm">Primary health services, community healthcare coordination, and outreach.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 02</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Gabtu PHC</h3>
+                <p class="text-slate-600 text-sm">Routine consultations, primary treatment, and maternal health care.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 03</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Illela Auwal PHC</h3>
+                <p class="text-slate-600 text-sm">Immunization, child health tracking, and basic curative support.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 04</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Bardoki PHC</h3>
+                <p class="text-slate-600 text-sm">Ward-level health center offering outpatient and preventive care.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 05</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Gwalli PHC</h3>
+                <p class="text-slate-600 text-sm">Community health facility delivering accessible frontline medical access.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 06</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Birnin Magaji PHC</h3>
+                <p class="text-slate-600 text-sm">Comprehensive health center serving Birnin Magaji area residents.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 07</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Kwammaka PHC</h3>
+                <p class="text-slate-600 text-sm">Primary care clinic managing disease prevention and health education.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 08</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Burnin Tudu PHC</h3>
+                <p class="text-slate-600 text-sm">Outpatient treatments, vaccine administration, and family care.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 09</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Daki takwas PHC</h3>
+                <p class="text-slate-600 text-sm">Local health post providing essential primary medical assistance.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 10</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Leshi PHC</h3>
+                <p class="text-slate-600 text-sm">Ward clinic supporting routine healthcare delivery and consultations.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 11</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Falale PHC</h3>
+                <p class="text-slate-600 text-sm">Preventive health services, antenatal care, and treatment programs.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 12</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Iyaka PHC</h3>
+                <p class="text-slate-600 text-sm">Primary care facility catering to community health and wellness.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 13</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Gamo PHC</h3>
+                <p class="text-slate-600 text-sm">Maternal and child health clinic offering localized medical services.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 14</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Gayari PHC</h3>
+                <p class="text-slate-600 text-sm">Comprehensive clinic providing medical care for Gayari catchment area.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 15</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">G. Town PHC</h3>
+                <p class="text-slate-600 text-sm">Central community clinic delivering reliable healthcare options.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 16</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Lema B. PHC</h3>
+                <p class="text-slate-600 text-sm">Frontline primary health clinic supporting rural diagnoses and care.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 17</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Gidan Kade PHC</h3>
+                <p class="text-slate-600 text-sm">Community health hub providing immunization and illness treatment.</p>
+            </div>
+            <div class="clinic-card bg-white p-6 rounded-3xl">
+                <span class="text-xs font-black text-emerald-700 uppercase tracking-wide">Facility 18</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1 mb-1">Additional PHC Post</h3>
+                <p class="text-slate-600 text-sm">Supplementary primary health unit extending coverage across the LGA.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Administrative Units / Leadership Desks -->
+    <section id="desks" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Administrative Units & Leadership Desks</h2>
+            <p class="text-slate-600 text-sm mt-2">Core departmental offices managing health policy, surveillance, and program rollouts across the LGA.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="desk-card bg-white p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center font-bold text-lg mb-4">🏛️</div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Director's Office</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Overall executive leadership, coordination of healthcare policies, and strategic administrative governance.</p>
+            </div>
+            <div class="desk-card bg-white p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center font-bold text-lg mb-4">📊</div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">M&E Desk</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Monitoring & Evaluation unit tracking key health indicators, routine data aggregation, and performance metrics.</p>
+            </div>
+            <div class="desk-card bg-white p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center font-bold text-lg mb-4">🦠</div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Disease Surveillance Officer Desk</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Tracking disease outbreaks, prompt alert response systems, and epidemic prevention measures.</p>
+            </div>
+            <div class="desk-card bg-white p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center font-bold text-lg mb-4">💉</div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">LIO (Local Immunization Officer) Desk</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Planning and execution of routine immunization schedules, vaccination campaigns, and child wellness drives.</p>
+            </div>
+            <div class="desk-card bg-white p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center font-bold text-lg mb-4">❄️</div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Cold Chain Officer Desk</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Managing solar refrigeration infrastructure, vaccine storage standards, and cold chain inventory security.</p>
+            </div>
+            <div class="desk-card bg-white p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center font-bold text-lg mb-4">👶</div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">MCH (Maternal and Child Health)</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Managing maternal care, antenatal services, safe deliveries, and child health welfare interventions.</p>
+            </div>
+            <div class="desk-card bg-white p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center font-bold text-lg mb-4">🌱</div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Environmental Health Unit</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Supervising community hygiene, sanitation programs, waste management, and disease vector control.</p>
+            </div>
+            <div class="desk-card bg-white p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center font-bold text-lg mb-4">🩺</div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">TB and Leprosy Unit</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Coordinating tuberculosis and leprosy testing, treatment programs, and patient compliance monitoring.</p>
+            </div>
+            <div class="desk-card bg-white p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center font-bold text-lg mb-4">📢</div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Health Education Unit</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Driving public health awareness campaigns, community mobilization, and preventive health sensitization.</p>
+            </div>
+            <div class="desk-card bg-white p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center font-bold text-lg mb-4">🦟</div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">NTD (Neglected Tropical Diseases) Unit</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Executing mass drug administrations and targeted treatment strategies for neglected tropical diseases.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ward Focal Persons Directory -->
+    <section id="focal-persons" class="py-16 bg-white border-t border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Ward Focal Persons Directory</h2>
+                <p class="text-slate-600 text-sm mt-2">Designated representatives overseeing field reporting and primary health activities per ward.</p>
+            </div>
+
+            <div class="overflow-x-auto shadow-sm rounded-2xl border border-slate-200">
+                <table class="w-full text-left border-collapse bg-white">
+                    <thead class="bg-emerald-900 text-white text-xs uppercase tracking-wider">
+                        <tr>
+                            <th class="py-4 px-6">S/N</th>
+                            <th class="py-4 px-6">Ward Name</th>
+                            <th class="py-4 px-6">Focal Person Name</th>
+                            <th class="py-4 px-6">Contact Phone</th>
+                            <th class="py-4 px-6">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm font-medium">
+                        <tr class="hover:bg-emerald-50/40 transition">
+                            <td class="py-4 px-6 text-slate-500">1</td>
+                            <td class="py-4 px-6 font-bold text-slate-900">Rafi Ward</td>
+                            <td class="py-4 px-6">Aliyu Muhammad</td>
+                            <td class="py-4 px-6 text-slate-600">07035162395</td>
+                            <td class="py-4 px-6">
+                                <a href="#contact" onclick="setReporter('Aliyu Muhammad', 'Rafi Ward')" class="bg-emerald-100 text-emerald-800 hover:bg-emerald-700 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl transition inline-block shadow-sm">Send Daily Report</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-emerald-50/40 transition">
+                            <td class="py-4 px-6 text-slate-500">2</td>
+                            <td class="py-4 px-6 font-bold text-slate-900">Gyalange Ward</td>
+                            <td class="py-4 px-6">Mustapha Garba</td>
+                            <td class="py-4 px-6 text-slate-600">08030639193</td>
+                            <td class="py-4 px-6">
+                                <a href="#contact" onclick="setReporter('Mustapha Garba', 'Gyalange Ward')" class="bg-emerald-100 text-emerald-800 hover:bg-emerald-700 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl transition inline-block shadow-sm">Send Daily Report</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-emerald-50/40 transition">
+                            <td class="py-4 px-6 text-slate-500">3</td>
+                            <td class="py-4 px-6 font-bold text-slate-900">Illela Auwal Ward</td>
+                            <td class="py-4 px-6">Lauwali Bala</td>
+                            <td class="py-4 px-6 text-slate-600">09035918493</td>
+                            <td class="py-4 px-6">
+                                <a href="#contact" onclick="setReporter('Lauwali Bala', 'Illela Auwal Ward')" class="bg-emerald-100 text-emerald-800 hover:bg-emerald-700 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl transition inline-block shadow-sm">Send Daily Report</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-emerald-50/40 transition">
+                            <td class="py-4 px-6 text-slate-500">4</td>
+                            <td class="py-4 px-6 font-bold text-slate-900">Bardoki Ward</td>
+                            <td class="py-4 px-6">Yahuza Abubakar</td>
+                            <td class="py-4 px-6 text-slate-600">09031206169</td>
+                            <td class="py-4 px-6">
+                                <a href="#contact" onclick="setReporter('Yahuza Abubakar', 'Bardoki Ward')" class="bg-emerald-100 text-emerald-800 hover:bg-emerald-700 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl transition inline-block shadow-sm">Send Daily Report</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-emerald-50/40 transition">
+                            <td class="py-4 px-6 text-slate-500">5</td>
+                            <td class="py-4 px-6 font-bold text-slate-900">Magaji Ward</td>
+                            <td class="py-4 px-6">Lauwali Buhari</td>
+                            <td class="py-4 px-6 text-slate-600">08034784763</td>
+                            <td class="py-4 px-6">
+                                <a href="#contact" onclick="setReporter('Gwalli Focal', 'Gwalli Ward')" class="bg-emerald-100 text-emerald-800 hover:bg-emerald-700 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl transition inline-block shadow-sm">Send Daily Report</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-emerald-50/40 transition">
+                            <td class="py-4 px-6 text-slate-500">6</td>
+                            <td class="py-4 px-6 font-bold text-slate-900">Birnin Magaji Ward</td>
+                            <td class="py-4 px-6">Abdurrazak Sani</td>
+                            <td class="py-4 px-6 text-slate-600">07010198561</td>
+                            <td class="py-4 px-6">
+                                <a href="#contact" onclick="setReporter('Lawal Birnin Magaji', 'Birnin Magaji Ward')" class="bg-emerald-100 text-emerald-800 hover:bg-emerald-700 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl transition inline-block shadow-sm">Send Daily Report</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-emerald-50/40 transition">
+                            <td class="py-4 px-6 text-slate-500">7</td>
+                            <td class="py-4 px-6 font-bold text-slate-900">Birnin Tudu Ward</td>
+                            <td class="py-4 px-6">Zaharaddeen Muhammad</td>
+                            <td class="py-4 px-6 text-slate-600">08133616212</td>
+                            <td class="py-4 px-6">
+                                <a href="#contact" onclick="setReporter('Kwammaka Focal', 'Kwammaka Ward')" class="bg-emerald-100 text-emerald-800 hover:bg-emerald-700 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl transition inline-block shadow-sm">Send Daily Report</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-emerald-50/40 transition">
+                            <td class="py-4 px-6 text-slate-500">8</td>
+                            <td class="py-4 px-6 font-bold text-slate-900">Uban Dawaki Ward</td>
+                            <td class="py-4 px-6">Jamilu Isah</td>
+                            <td class="py-4 px-6 text-slate-600">07064318611</td>
+                            <td class="py-4 px-6">
+                                <a href="#contact" onclick="setReporter('Abubakar Birnin Tudu', 'Birnin Tudu Ward')" class="bg-emerald-100 text-emerald-800 hover:bg-emerald-700 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl transition inline-block shadow-sm">Send Daily Report</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-emerald-50/40 transition">
+                            <td class="py-4 px-6 text-slate-500">9</td>
+                            <td class="py-4 px-6 font-bold text-slate-900">Gamo Ward</td>
+                            <td class="py-4 px-6">Bashar Gamo</td>
+                            <td class="py-4 px-6 text-slate-600">08169561105</td>
+                            <td class="py-4 px-6">
+                                <a href="#contact" onclick="setReporter('Bashar Gamo', 'Gamo Ward')" class="bg-emerald-100 text-emerald-800 hover:bg-emerald-700 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl transition inline-block shadow-sm">Send Daily Report</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-emerald-50/40 transition">
+                            <td class="py-4 px-6 text-slate-500">10</td>
+                            <td class="py-4 px-6 font-bold text-slate-900">Gayari Ward</td>
+                            <td class="py-4 px-6">Dahiru Gayari</td>
+                            <td class="py-4 px-6 text-slate-600">07030662723</td>
+                            <td class="py-4 px-6">
+                                <a href="#contact" onclick="setReporter('Dahiru Gayari', 'Gayari Ward')" class="bg-emerald-100 text-emerald-800 hover:bg-emerald-700 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl transition inline-block shadow-sm">Send Daily Report</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-emerald-50/40 transition">
+                            <td class="py-4 px-6 text-slate-500">11</td>
+                            <td class="py-4 px-6 font-bold text-slate-900">Falale Ward</td>
+                            <td class="py-4 px-6">surajo Abubakar</td>
+                            <td class="py-4 px-6 text-slate-600">08137561404</td>
+                            <td class="py-4 px-6">
+                                <a href="#contact" onclick="setReporter('Surajo Abubakar', 'Falale Ward')" class="bg-emerald-100 text-emerald-800 hover:bg-emerald-700 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl transition inline-block shadow-sm">Send Daily Report</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Submitted Reports Feed -->
+    <section id="reports-feed" class="py-16 bg-slate-100/70 border-t border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Live Submitted Reports Feed</h2>
+                    <p class="text-slate-600 text-sm mt-1">Real-time incoming report logs submitted from ward focal representatives.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportToExcel()" class="bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold px-4 py-3 rounded-xl transition shadow">
+                        Export Excel (CSV)
+                    </button>
+                    <button onclick="exportToPDF()" class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold px-4 py-3 rounded-xl transition shadow">
+                        Save as PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto shadow-sm rounded-2xl border border-slate-200 bg-white">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-900 text-white text-xs uppercase tracking-wider">
+                        <tr>
+                            <th class="py-4 px-5">Date / Time</th>
+                            <th class="py-4 px-5">Focal Person / Ward</th>
+                            <th class="py-4 px-5">Target Leadership Desk</th>
+                            <th class="py-4 px-5">Report Message Summary</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody" class="divide-y divide-slate-100 text-sm">
+                        <!-- Dynamic items loaded via script -->
+                    </tbody>
+                </table>
+                <div id="noReportsMessage" class="p-12 text-center text-slate-400 text-sm font-medium">
+                    No reports submitted yet. Use the form below to send a daily report.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Development Partners & NGOs -->
+    <section id="ngos" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Development Partners & NGOs</h2>
+            <p class="text-slate-600 text-sm mt-2">Collaborative agencies supporting health interventions and technical logistics.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div class="partner-card bg-white p-8 rounded-3xl">
+                <h3 class="text-lg font-bold text-slate-900 mb-2">WHO</h3>
+                <p class="text-slate-600 text-sm">Technical support for disease surveillance and immunization verification.</p>
+            </div>
+            <div class="partner-card bg-white p-8 rounded-3xl">
+                <h3 class="text-lg font-bold text-slate-900 mb-2">UNICEF Nigeria</h3>
+                <p class="text-slate-600 text-sm">Support for maternal-child care programs and vaccine cold chain logistics.</p>
+            </div>
+            <div class="partner-card bg-white p-8 rounded-3xl">
+                <h3 class="text-lg font-bold text-slate-900 mb-2">SPHCB</h3>
+                <p class="text-slate-600 text-sm">State-level regulatory supervision and human resource allocation.</p>
+            </div>
+            <div class="partner-card bg-white p-8 rounded-3xl">
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Cigari Foundation</h3>
+                <p class="text-slate-600 text-sm">Community health outreach and grassroots health support programs.</p>
+            </div>
+            <div class="partner-card bg-white p-8 rounded-3xl">
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Sultan Foundation</h3>
+                <p class="text-slate-600 text-sm">Philanthropic health interventions and traditional leadership engagement.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Daily Report Submission Form -->
+    <section id="contact" class="py-16 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200 shadow-xl">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-black text-slate-900">Direct Daily Report Submission</h2>
+                <p class="text-slate-600 text-sm mt-1">Submit ward updates or health logs directly to your targeted leadership desk.</p>
+            </div>
+            <form id="reportForm" class="space-y-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Ward / Focal Person</label>
+                        <input type="text" id="reporterName" required class="w-full px-4 py-3 text-sm border border-slate-200 rounded-2xl bg-slate-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none transition" placeholder="Select from table above">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Target Leadership Desk</label>
+                        <select id="targetDesk" class="w-full px-4 py-3 text-sm border border-slate-200 rounded-2xl bg-slate-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none transition">
+                            <option>Director's Office</option>
+                            <option>M&E (Monitoring & Evaluation) Desk</option>
+                            <option>Disease Surveillance Officer Desk</option>
+                            <option>LIO (Local Immunization Officer) Desk</option>
+                            <option>Cold Chain Officer Desk</option>
+                            <option>MCH (Maternal and Child Health)</option>
+                            <option>Environmental Health Unit</option>
+                            <option>TB and Leprosy Unit</option>
+                            <option>Health Education Unit</option>
+                            <option>NTD Unit</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Report Details & Notes</label>
+                    <textarea id="reportMessage" rows="4" required class="w-full px-4 py-3 text-sm border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-600 focus:outline-none transition" placeholder="Enter routine immunization figures, disease updates, or field notes here..."></textarea>
+                </div>
+                <button type="submit" class="w-full bg-emerald-800 hover:bg-emerald-900 text-white font-bold py-4 rounded-2xl transition shadow-lg text-sm active:scale-[0.99]">
+                    Submit Report to Leadership Desk
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- JavaScript Handling -->
+    <script>
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+            document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('adminPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            const loginForm = document.getElementById('adminLoginForm');
+            const adminPanel = document.getElementById('adminPanelContent');
+
+            if (pass === 'admin123') {
+                errorDiv.classList.add('hidden');
+                loginForm.classList.add('hidden');
+                adminPanel.classList.remove('hidden');
+            } else {
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        function logoutAdmin() {
+            document.getElementById('adminLoginForm').classList.remove('hidden');
+            document.getElementById('adminPanelContent').classList.add('hidden');
+            document.getElementById('adminPassword').value = '';
+            closeAdminModal();
+        }
+
+        function setReporter(name, ward) {
+            const inputField = document.getElementById('reporterName');
+            inputField.value = name + ' (' + ward + ')';
+            inputField.focus();
+        }
+
+        document.addEventListener('DOMContentLoaded', renderReports);
+
+        const form = document.getElementById('reportForm');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const reporter = document.getElementById('reporterName').value;
+            const desk = document.getElementById('targetDesk').value;
+            const message = document.getElementById('reportMessage').value;
+            const timestamp = new Date().toLocaleString();
+
+            const newReport = { timestamp, reporter, desk, message };
+
+            let reports = JSON.parse(localStorage.getItem('gummiPhcReports')) || [];
+            reports.unshift(newReport);
+            localStorage.setItem('gummiPhcReports', JSON.stringify(reports));
+
+            form.reset();
+            renderReports();
+
+            document.getElementById('reports-feed').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        function renderReports() {
+            const reportsTableBody = document.getElementById('reportsTableBody');
+            const noReportsMessage = document.getElementById('noReportsMessage');
+            const reportsCount = document.getElementById('reportsCount');
+            let reports = JSON.parse(localStorage.getItem('gummiPhcReports')) || [];
+
+            reportsTableBody.innerHTML = '';
+            reportsCount.textContent = reports.length;
+
+            if (reports.length === 0) {
+                noReportsMessage.style.display = 'block';
+                return;
+            }
+
+            noReportsMessage.style.display = 'none';
+
+            reports.forEach(rep => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-slate-50 transition';
+                row.innerHTML = `
+                    <td class="py-4 px-5 text-xs text-slate-500 whitespace-nowrap">${rep.timestamp}</td>
+                    <td class="py-4 px-5 font-bold text-slate-900">${rep.reporter}</td>
+                    <td class="py-4 px-5 text-emerald-800 font-semibold">${rep.desk}</td>
+                    <td class="py-4 px-5 text-slate-700">${rep.message}</td>
+                `;
+                reportsTableBody.appendChild(row);
+            });
+        }
+
+        function exportToExcel() {
+            let reports = JSON.parse(localStorage.getItem('gummiPhcReports')) || [];
+            if (reports.length === 0) {
+                alert('No reports available to export.');
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,Date/Time,Focal Person / Ward,Target Admin Desk,Report Message Summary\n";
+            reports.forEach(function(row) {
+                let escapedMessage = '"' + row.message.replace(/"/g, '""') + '"';
+                let escapedReporter = '"' + row.reporter.replace(/"/g, '""') + '"';
+                let escapedDesk = '"' + row.desk.replace(/"/g, '""') + '"';
+                csvContent += [row.timestamp, escapedReporter, escapedDesk, escapedMessage].join(",") + "\n";
+            });
+
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Gummi_LGA_PHC_Reports.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportToPDF() {
+            let reports = JSON.parse(localStorage.getItem('gummiPhcReports')) || [];
+            if (reports.length === 0) {
+                alert('No reports available to print or save as PDF.');
+                return;
+            }
+            window.print();
+        }
+
+        function clearReports() {
+            if (confirm('Are you sure you want to clear all submitted reports from local storage?')) {
+                localStorage.removeItem('gummiPhcReports');
+                renderReports();
+                closeAdminModal();
+            }
+        }
+    </script>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-10 text-center text-xs border-t border-slate-800">
+        <p>&copy; 2026 Gummi Local Government Area Primary Health Care Department. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
